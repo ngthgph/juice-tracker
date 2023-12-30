@@ -23,7 +23,7 @@ plugins {
 
 android {
     namespace = "com.example.juicetracker"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.juicetracker"
@@ -66,6 +66,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:${rootProject.extra["arch_lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["arch_lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${rootProject.extra["arch_lifecycle_version"]}")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["arch_lifecycle_version"]}")
     implementation("androidx.navigation:navigation-fragment-ktx:${rootProject.extra["nav_version"]}")
     implementation("androidx.navigation:navigation-ui-ktx:${rootProject.extra["nav_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")

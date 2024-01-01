@@ -26,13 +26,14 @@
         <action
             android:id="@+id/action_trackerFragment_to_entryDialogFragment"
             app:destination="@id/entryDialogFragment" />
-        <argument
-            android:name="itemId"
-            app:argType="long"
-            android:defaultValue="0L" />
     </fragment>
     <dialog
         android:id="@+id/entryDialogFragment"
         android:name="com.example.juicetracker.EntryDialogFragment"
-        android:label="EntryDialogFragment" />
+        android:label="EntryDialogFragment" >
+        <argument
+            android:name="itemId"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </dialog>
 </navigation>

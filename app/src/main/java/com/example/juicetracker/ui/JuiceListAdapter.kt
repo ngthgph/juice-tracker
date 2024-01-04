@@ -17,10 +17,12 @@ package com.example.juicetracker.ui
 
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -46,30 +48,46 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.juicetracker.R
 import com.example.juicetracker.data.Juice
 import com.example.juicetracker.data.JuiceColor
+import com.google.accompanist.themeadapter.material3.Mdc3Theme
 
-//class JuiceListAdapter(
-//    private var onEdit: (Juice) -> Unit,
-//    private var onDelete: (Juice) -> Unit
-//) : ListAdapter<Juice, JuiceListAdapter.JuiceListViewHolder>(JuiceDiffCallback()) {
-//
-//    class JuiceListViewHolder(
-//        private val onEdit: (Juice) -> Unit,
-//        private val onDelete: (Juice) -> Unit
-//    ) : RecyclerView.ViewHolder(composeView) {
-//        fun bind(juice: Juice) {
-//        }
-//    }
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = JuiceListViewHolder {
-//        return JuiceListViewHolder(
-//            ComposeView(parent.context),
-//            onEdit,
-//            onDelete
-//        )
-//    }
-//    override fun onBindViewHolder(holder: JuiceListViewHolder, position: Int) {
-//        holder.bind(getItem(position))
-//    }
-//}
+class JuiceListAdapter(
+    private var onEdit: (Juice) -> Unit,
+    private var onDelete: (Juice) -> Unit
+) : ListAdapter<Juice, JuiceListAdapter.JuiceListViewHolder>(JuiceDiffCallback()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JuiceListViewHolder {
+        return JuiceListViewHolder(
+            ComposeView(parent.context),
+            onEdit,
+            onDelete
+        )
+    }
+    override fun onBindViewHolder(holder: JuiceListViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+    class JuiceListViewHolder(
+        private val composeView: ComposeView,
+        private val onEdit: (Juice) -> Unit,
+        private val onDelete: (Juice) -> Unit
+    ) : RecyclerView.ViewHolder(composeView) {
+        fun bind(input: Juice) {
+            composeView.setContent {
+                ListItem(
+                    input = input,
+                    onDelete = onDelete,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onEdit(input)
+                        }
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                )
+            }
+        }
+    }
+
+
+}
 
 class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
     override fun areItemsTheSame(oldItem: Juice, newItem: Juice): Boolean {
@@ -82,10 +100,23 @@ class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
 
 @Composable
 fun ListItem(
-    juice: Juice,
+    input: Juice,
     onDelete: (Juice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    Mdc3Theme {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.SpaceBetween // no need
+            ) {
+            JuiceIcon(color = input.color)
+            JuiceDetails(juice = input, Modifier.weight(1f))
+            DeleteIcon(
+                {onDelete(input)},
+                Modifier.align(Alignment.Top) // no need modifier
+            )
+        }
+    }
 }
 
 @Composable
@@ -146,9 +177,9 @@ fun RatingDisplay(rating: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DeleteIcon(onDelete: (Juice) -> Unit, modifier: Modifier = Modifier) {
+fun DeleteIcon(onDelete: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(
-        onClick = { onDelete },
+        onClick = onDelete,
         modifier = modifier
         ) {
         Icon(
@@ -159,6 +190,16 @@ fun DeleteIcon(onDelete: (Juice) -> Unit, modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
+fun ListItemPreview() {
+    ListItem(
+        Juice(1L, "Sweet Beet", "Apple, carrot, beet, and lemon", "Red", 3),
+        {}
+        )
+}
+
+
+@Preview
+@Composable
 fun DeleteIconPreview() {
     DeleteIcon(onDelete = {})
 }
@@ -166,9 +207,7 @@ fun DeleteIconPreview() {
 @Preview
 @Composable
 fun JuiceDetailsPreview() {
-    JuiceDetails(
-        juice = Juice(1L, "Apple", "Small with good taste", "Red", 3)
-    )
+    JuiceDetails(Juice(1L, "Sweet Beet", "Apple, carrot, beet, and lemon", "Red", 3))
 }
 
 @Preview
